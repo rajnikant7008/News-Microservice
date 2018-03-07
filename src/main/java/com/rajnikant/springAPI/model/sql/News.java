@@ -8,6 +8,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -18,19 +24,20 @@ import java.util.Date;
 @Table(name = "news")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
+@Indexed
 public class News implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
+    @Field(index = Index.YES, analyze=Analyze.NO, store = Store.YES)
     private String headline;
 
-    @NotBlank
     private String author;
 
     @NotBlank
+    @Field(index = Index.YES, analyze=Analyze.NO, store = Store.YES)
     private String title;
 
     @NotBlank
@@ -52,6 +59,11 @@ public class News implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-    //private NewsSource newsSource;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "source_id")),
+            @AttributeOverride(name = "name", column = @Column(name = "source_name")) })
+    private NewsSource source;
 
 } 

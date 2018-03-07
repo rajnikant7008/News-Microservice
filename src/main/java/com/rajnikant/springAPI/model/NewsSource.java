@@ -2,8 +2,14 @@ package com.rajnikant.springAPI.model;
 
 import lombok.Data;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
 @Data
-public class NewsSource {
-    int id;
-    String name;
+@Embeddable
+public class NewsSource implements Serializable{
+
+    private String id;
+
+    private String name;
 } 

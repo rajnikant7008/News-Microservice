@@ -1,9 +1,11 @@
 package com.rajnikant.springAPI.controller;
 
-import com.rajnikant.springAPI.model.Employee;
 import com.rajnikant.springAPI.model.sql.News;
 import com.rajnikant.springAPI.repository.NewsRepository;
+import com.rajnikant.springAPI.service.NewsSearch;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,20 +25,32 @@ public class NewsController {
     @Autowired
     NewsRepository newsRepository;
 
-    @ApiOperation(value = "View status of API server")
+    @Autowired
+    NewsSearch newsSearch;
+
+    @ApiOperation(value = "View status of Server")
     @RequestMapping(value = "/ping", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity ping(){
         return ResponseEntity.ok().body("Success!");
     }
 
-
     @ApiOperation(value = "Get All the news")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
     @RequestMapping(value = "/news",method = RequestMethod.GET, produces = "application/json")
     public Page<News> getAllNews(Pageable pageable){
         return newsRepository.findAll(pageable);
     }
 
-    @ApiOperation(value = "Get the news from news id")
+    @ApiOperation(value = "Get news by id")
     @RequestMapping(value = "/news/{id}",method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<News> getNewsById(@PathVariable(value = "id") Long newsId){
         News news = newsRepository.findOne(newsId);
@@ -77,5 +91,11 @@ public class NewsController {
         news.setAuthor(newsDetails.getAuthor());
         News updatedNews = newsRepository.save(news);
         return ResponseEntity.ok(updatedNews);
+    }
+
+    @ApiOperation(value = "Search the news")
+    @RequestMapping(value = "/news/search/{query}",method = RequestMethod.GET, produces = "application/json")
+    public List<News> searchNews(@PathVariable(value = "query") String query){
+        return newsSearch.fuzzySearch(query);
     }
 } 

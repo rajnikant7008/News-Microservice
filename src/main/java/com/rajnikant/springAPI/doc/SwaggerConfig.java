@@ -28,8 +28,8 @@ public class SwaggerConfig {
 
     private ApiInfo metaData() {
         ApiInfo apiInfo = new ApiInfo(
-                "Spring Boot REST API",
-                "Spring Boot REST API Employee Management",
+                "News Service",
+                "Spring Boot REST API for News Service",
                 "1.0",
                 "Terms of service",
                 new Contact("Rajnikant Raman", "https://www.linkedin.com/in/rajnikant7008/", "rajnikant7008@gmail.com"),
