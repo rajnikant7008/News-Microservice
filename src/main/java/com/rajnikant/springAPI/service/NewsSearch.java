@@ -17,13 +17,12 @@ import java.util.List;
 
 @Service
 public class NewsSearch {
+    private final Logger LOG = LoggerFactory.getLogger(NewsSearch.class);
 
     private static final String HEADLINE = "headline";
     private static final String AUTHOR = "author";
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
-
-    private final Logger logger = (Logger) LoggerFactory.getLogger(NewsSearch.class);
 
     private final EntityManager entityManager;
 
@@ -33,9 +32,7 @@ public class NewsSearch {
         this.entityManager = entityManager;
     }
 
-
     public void initializeHibernateSearch() {
-
         try {
             FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
             fullTextEntityManager.createIndexer().startAndWait();
@@ -46,11 +43,11 @@ public class NewsSearch {
     }
 
     @Transactional
-    public List<News> fuzzySearch(String searchTerm){
+    public List<News> fuzzySearch(String searchTerm) {
 
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(News.class).get();
-        Query luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1).onFields(HEADLINE, TITLE)
+        Query luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(2).withPrefixLength(2).onFields(HEADLINE, TITLE, DESCRIPTION, AUTHOR)
                 .matching(searchTerm).createQuery();
 
         javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, News.class);
@@ -58,10 +55,9 @@ public class NewsSearch {
         // execute search
         List<News> newsList = null;
         try {
-            newsList  = jpaQuery.getResultList();
+            newsList = jpaQuery.getResultList();
         } catch (NoResultException nre) {
-            logger.warn("No result found");
-
+            LOG.warn("No result found for keyword : {} ", searchTerm);
         }
         return newsList;
     }

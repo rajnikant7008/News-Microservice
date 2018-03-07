@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Embeddable
-public class NewsSource implements Serializable{
+public class NewsSource implements Serializable {
 
     private String id;
 

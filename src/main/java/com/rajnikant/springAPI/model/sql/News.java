@@ -31,16 +31,18 @@ public class News implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Field(index = Index.YES, analyze=Analyze.NO, store = Store.YES)
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
     private String headline;
 
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
     private String author;
 
     @NotBlank
-    @Field(index = Index.YES, analyze=Analyze.NO, store = Store.YES)
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
     private String title;
 
     @NotBlank
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
     private String description;
 
     private String url;
@@ -63,7 +65,7 @@ public class News implements Serializable {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "id", column = @Column(name = "source_id")),
-            @AttributeOverride(name = "name", column = @Column(name = "source_name")) })
+            @AttributeOverride(name = "name", column = @Column(name = "source_name"))})
     private NewsSource source;
 
 } 

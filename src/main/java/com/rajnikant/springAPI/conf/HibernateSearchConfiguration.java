@@ -1,4 +1,5 @@
 package com.rajnikant.springAPI.conf;
+
 import javax.persistence.EntityManager;
 
 import com.rajnikant.springAPI.service.NewsSearch;
@@ -9,10 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-
 @Configuration
 public class HibernateSearchConfiguration {
-    private final Logger logger = LoggerFactory.getLogger(HibernateSearchConfiguration.class);
+    private final Logger LOG = LoggerFactory.getLogger(HibernateSearchConfiguration.class);
 
     @Autowired
     private EntityManager entityManager;
